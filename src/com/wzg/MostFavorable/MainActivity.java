@@ -10,7 +10,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.*;
 
-public class MainActivity extends Activity implements GestureDetector.OnGestureListener {
+public class MainActivity extends Activity {
     /**
      * Called when the activity is first created.
      */
@@ -24,16 +24,16 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
     private ImageButton btUser;
     private ImageButton btMore;
     private ListView listView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.main);
-        gestureDetector = new GestureDetector(this);
+        gestureDetector = new GestureDetector(new MyOnGestureListener());
         //这里的数据 后期必改 从接口接来数据再改
         imgIds = new int[]{R.drawable.btn_weight_press, R.drawable.bg_todo, R.drawable.categories_cell_bg_normal};
         viewFlipper = (ViewFlipper) findViewById(R.id.viewFlipper);
-        viewFlipper.addView(addTextView(getResources().getDrawable(R.drawable.back_button)));
         viewFlipper.addView(addTextView(getResources().getDrawable(R.drawable.bg_todo)));
         viewFlipper.addView(addTextView(getResources().getDrawable(R.drawable.btn_weight_press)));
         viewFlipper.addView(addTextView(getResources().getDrawable(R.drawable.categories_cell_bg_normal)));
@@ -41,10 +41,18 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
         viewFlipper.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                Log.d(TAG,event.getX()+"");
-                return true;
+                Log.d(TAG, "onTouch " + event.getAction());
+                viewFlipper.stopFlipping();             // 点击事件后，停止自动播放
+                viewFlipper.setAutoStart(false);
+                return gestureDetector.onTouchEvent(event);
             }
         });
+        viewFlipper.setAutoStart(true);
+        viewFlipper.setFlipInterval(3000);
+        if (viewFlipper.isAutoStart() && !viewFlipper.isFlipping()) {
+            viewFlipper.startFlipping();
+        }
+
         init();
     }
 
@@ -87,47 +95,44 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
         listView = (ListView) findViewById(R.id.listView);
     }
 
-    private void btFavourableClick(View v){
+    private void btFavourableClick(View v) {
         btMore.setSelected(false);
         btFavourable.setSelected(true);
         btNearby.setSelected(false);
         btUser.setSelected(false);
         btHome.setSelected(false);
     }
-    private void btHomeClick(View v){
+
+    private void btHomeClick(View v) {
         btMore.setSelected(false);
         btFavourable.setSelected(false);
         btNearby.setSelected(false);
         btUser.setSelected(false);
         btHome.setSelected(true);
     }
-    private void btMoreClick(View v){
+
+    private void btMoreClick(View v) {
         btMore.setSelected(true);
         btFavourable.setSelected(false);
         btNearby.setSelected(false);
         btUser.setSelected(false);
         btHome.setSelected(false);
     }
-    private void btNearbyClick(View v){
+
+    private void btNearbyClick(View v) {
         btMore.setSelected(false);
         btFavourable.setSelected(false);
         btNearby.setSelected(true);
         btUser.setSelected(false);
         btHome.setSelected(false);
     }
-    private void btUserClick(View v){
+
+    private void btUserClick(View v) {
         btMore.setSelected(false);
         btFavourable.setSelected(false);
         btNearby.setSelected(false);
         btUser.setSelected(true);
         btHome.setSelected(false);
-    }
-
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        // TODO Auto-generated method stub
-        return this.gestureDetector.onTouchEvent(event);
     }
 
     private TextView addTextView(Drawable d) {
@@ -136,49 +141,37 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
         return textView;
     }
 
-    @Override
-    public boolean onDown(MotionEvent e) {
-        return false;
-    }
+    class MyOnGestureListener extends GestureDetector.SimpleOnGestureListener {
 
-    @Override
-    public void onShowPress(MotionEvent e) {
-
-    }
-
-    @Override
-    public boolean onSingleTapUp(MotionEvent e) {
-        return false;
-    }
-
-    @Override
-    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        return false;
-    }
-
-    @Override
-    public void onLongPress(MotionEvent e) {
-
-    }
-
-    @Override
-    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-        Log.d(TAG,e1.getX()+"this");
-        if (e1.getX() - e2.getX() > 100) {
-            Log.d(TAG,e1.getX()+"this");
-            this.viewFlipper.setInAnimation(AnimationUtils.loadAnimation(this, R.anim.right_in));
-            this.viewFlipper.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.lift_out));
-            this.viewFlipper.showPrevious();
+        @Override
+        public boolean onDown(MotionEvent e) {
+            Log.d(TAG, "onDown");
             return true;
-        } else if ((e1.getX() - e2.getX()) < -100) {
-            this.viewFlipper.setInAnimation(AnimationUtils.loadAnimation(this, R.anim.left_in));
-            this.viewFlipper.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.right_out));
-            this.viewFlipper.showNext();
-            return true;
-
         }
-        return false;
 
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            Log.d(TAG, "onScroll");
+            return super.onScroll(e1, e2, distanceX, distanceY);
+        }
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            Log.d(TAG, "onFling");
+            if (e1.getX() - e2.getX() > 100) {
+                Log.d(TAG, e1.getX() + "this");
+                viewFlipper.setInAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.right_in));
+                viewFlipper.setOutAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.lift_out));
+                viewFlipper.showPrevious();
+                return true;
+            } else if ((e1.getX() - e2.getX()) < -100) {
+                viewFlipper.setInAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.left_in));
+                viewFlipper.setOutAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.right_out));
+                viewFlipper.showNext();
+                return true;
+            }
+            return true;
+        }
     }
 }
 
