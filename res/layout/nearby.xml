@@ -3,7 +3,63 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
-    <TextView android:layout_width="match_parent" android:layout_height="match_parent"
-            android:text="Nearby"/>
+              android:layout_height="match_parent"
+              android:background="@drawable/home_backgroud">
+    <LinearLayout
+            android:background="@drawable/navigation_bar_bg"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="2dp"
+            android:layout_weight="0"
+            >
+
+        <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="我的账户"
+                android:textSize="18dp"
+                android:textColor="@android:color/white"/>
+        <ImageButton android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:src="@drawable/location"
+                     android:background="@android:color/transparent"
+                     android:layout_gravity="center_vertical"
+                     android:layout_marginRight="32px"
+                />
+        <ImageButton android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:src="@drawable/map"
+                     android:layout_gravity="center_vertical"
+                     android:background="@android:color/transparent"
+                     android:layout_marginRight="32px"
+                />
+    </LinearLayout>
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:background="@drawable/bg_todo"
+            >
+        <Spinner android:id="@+id/aroundSpinner"
+                android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                android:background="@drawable/category_bg"
+                android:layout_weight="1">
+
+        </Spinner>
+        <Spinner android:id="@+id/typeSpinner"
+                android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:background="@drawable/category_bg"
+                android:layout_marginLeft="1px"
+                android:layout_weight="1">
+
+        </Spinner>
+    </LinearLayout>
+
 </LinearLayout>
