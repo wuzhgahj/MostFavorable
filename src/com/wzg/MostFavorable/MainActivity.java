@@ -13,18 +13,7 @@ public class MainActivity extends TabActivity {
      * Called when the activity is first created.
      */
     private final String TAG = "wawawawa";
-    private int[] imgIds;
-    private ViewFlipper viewFlipper;
-    private GestureDetector gestureDetector;
-    private ImageButton btHome;
-    private ImageButton btFavourable;
-    private ImageButton btNearby;
-    private ImageButton btUser;
-    private ImageButton btMore;
-    private ListView listView;
-    private TabHost tabs;
-
-    TabHost mTabHost;
+    private TabHost mTabHost;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
