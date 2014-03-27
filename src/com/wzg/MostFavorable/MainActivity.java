@@ -1,16 +1,14 @@
 package com.wzg.MostFavorable;
 
-import android.app.Activity;
+import android.app.TabActivity;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
+import android.content.res.Resources;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.*;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.*;
+import com.wzg.MostFavorable.view.*;
 
-public class MainActivity extends Activity {
+public class MainActivity extends TabActivity {
     /**
      * Called when the activity is first created.
      */
@@ -24,153 +22,112 @@ public class MainActivity extends Activity {
     private ImageButton btUser;
     private ImageButton btMore;
     private ListView listView;
+    private TabHost tabs;
+
+    TabHost mTabHost;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.main);
-        gestureDetector = new GestureDetector(new MyOnGestureListener());
-        //这里的数据 后期必改 从接口接来数据再改
-        imgIds = new int[]{R.drawable.btn_weight_press, R.drawable.bg_todo, R.drawable.categories_cell_bg_normal};
-        viewFlipper = (ViewFlipper) findViewById(R.id.viewFlipper);
-        viewFlipper.addView(addTextView(getResources().getDrawable(R.drawable.bg_todo)));
-        viewFlipper.addView(addTextView(getResources().getDrawable(R.drawable.btn_weight_press)));
-        viewFlipper.addView(addTextView(getResources().getDrawable(R.drawable.categories_cell_bg_normal)));
-        viewFlipper.addView(addTextView(getResources().getDrawable(R.drawable.categories_cell_bg_selected)));
-        viewFlipper.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                Log.d(TAG, "onTouch " + event.getAction());
-                viewFlipper.stopFlipping();             // 点击事件后，停止自动播放
-                viewFlipper.setAutoStart(false);
-                return gestureDetector.onTouchEvent(event);
-            }
-        });
-        viewFlipper.setAutoStart(true);
-        viewFlipper.setFlipInterval(3000);
-        if (viewFlipper.isAutoStart() && !viewFlipper.isFlipping()) {
-            viewFlipper.startFlipping();
-        }
-
-        init();
+//        init();
+        test();
     }
+
+    public void test() {
+        mTabHost = getTabHost();
+        Intent intent1 = new Intent(this, HomeActivity.class);
+        View view = LayoutInflater.from(this).inflate(R.layout.homestate, null);
+        TextView tv = (TextView) view.findViewById(R.id.tv_tab);
+        tv.setText("");
+        mTabHost.addTab(mTabHost.newTabSpec("")
+                .setIndicator(view)
+                .setContent(intent1));
+
+        Intent intent2 = new Intent(this, FavorableActivity.class);
+        view = LayoutInflater.from(this).inflate(R.layout.favorablestate, null);
+        TextView tv1 = (TextView) view.findViewById(R.id.tv_tab);
+        tv1.setText("");
+        mTabHost.addTab(mTabHost.newTabSpec("")
+                .setIndicator(view)
+                .setContent(intent2));
+
+        Intent intent3 = new Intent(this, NearbyActivity.class);
+        view = LayoutInflater.from(this).inflate(R.layout.nearbystate, null);
+        TextView tv3 = (TextView) view.findViewById(R.id.tv_tab);
+        tv3.setText("");
+        mTabHost.addTab(mTabHost.newTabSpec("")
+                .setIndicator(view)
+                .setContent(intent3));
+
+        Intent intent4 = new Intent(this,LoginActivity.class);
+        view = LayoutInflater.from(this).inflate(R.layout.loginstate, null);
+        TextView tv4 = (TextView) view.findViewById(R.id.tv_tab);
+        tv4.setText("");
+        mTabHost.addTab(mTabHost.newTabSpec("")
+                .setIndicator(view)
+                .setContent(intent4));
+
+        Intent intent5 = new Intent(this,MoreInfoActivity.class);
+        view = LayoutInflater.from(this).inflate(R.layout.morestate, null);
+        TextView tv5 = (TextView) view.findViewById(R.id.tv_tab);
+        tv5.setText("");
+        mTabHost.addTab(mTabHost.newTabSpec("")
+                .setIndicator(view)
+                .setContent(intent5));
+        mTabHost.setCurrentTab(0);
+    }
+
+//    private void createTab(String text, Intent intent) {
+//        mTabHost.addTab(mTabHost.newTabSpec(text)
+//                .setIndicator(createTabView(text))
+//                .setContent(intent));
+//    }
+
+//    private View createTabView(String text) {
+//        View view = LayoutInflater.from(this).inflate(R.layout.homestate, null);
+//        TextView tv = (TextView) view.findViewById(R.id.tv_tab);
+//        tv.setText(text);
+//        return view;
+//    }
 
     public void init() {
-        btFavourable = (ImageButton) findViewById(R.id.favourable);
-        btFavourable.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                btFavourableClick(v);
-            }
-        });
-        btHome = (ImageButton) findViewById(R.id.home);
-        btHome.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                btHomeClick(v);
-            }
-        });
-        btMore = (ImageButton) findViewById(R.id.more);
-        btMore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                btMoreClick(v);
-            }
-        });
-        btNearby = (ImageButton) findViewById(R.id.nearby);
-        btNearby.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                btNearbyClick(v);
-            }
-        });
-        btUser = (ImageButton) findViewById(R.id.user);
-        btUser.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                btUserClick(v);
-            }
-        });
-        listView = (ListView) findViewById(R.id.listView);
-    }
+        final Resources res = getResources();
+        final TabHost tabHost = getTabHost();
 
-    private void btFavourableClick(View v) {
-        btMore.setSelected(false);
-        btFavourable.setSelected(true);
-        btNearby.setSelected(false);
-        btUser.setSelected(false);
-        btHome.setSelected(false);
-    }
+        TabHost.TabSpec page1 = tabHost.newTabSpec("tab1")
+                .setIndicator("", res.getDrawable(R.drawable.state1))
+                .setContent(new Intent(this, HomeActivity.class));
+        tabHost.addTab(page1);
 
-    private void btHomeClick(View v) {
-        btMore.setSelected(false);
-        btFavourable.setSelected(false);
-        btNearby.setSelected(false);
-        btUser.setSelected(false);
-        btHome.setSelected(true);
-    }
+        TabHost.TabSpec page2 = tabHost.newTabSpec("tab2")
+                .setIndicator("", res.getDrawable(R.drawable.state2))
+                .setContent(new Intent(this, FavorableActivity.class));
+        tabHost.addTab(page2);
 
-    private void btMoreClick(View v) {
-        btMore.setSelected(true);
-        btFavourable.setSelected(false);
-        btNearby.setSelected(false);
-        btUser.setSelected(false);
-        btHome.setSelected(false);
-    }
+        TabHost.TabSpec page3 = tabHost.newTabSpec("tab3")
+                .setIndicator("", res.getDrawable(R.drawable.state3))
+                .setContent(new Intent(this, NearbyActivity.class));
+        tabHost.addTab(page3);
 
-    private void btNearbyClick(View v) {
-        btMore.setSelected(false);
-        btFavourable.setSelected(false);
-        btNearby.setSelected(true);
-        btUser.setSelected(false);
-        btHome.setSelected(false);
-    }
+        TabHost.TabSpec page4 = tabHost.newTabSpec("tab4")
+                .setIndicator("", res.getDrawable(R.drawable.state4))
+                .setContent(new Intent(this, LoginActivity.class));
+        tabHost.addTab(page4);
 
-    private void btUserClick(View v) {
-        btMore.setSelected(false);
-        btFavourable.setSelected(false);
-        btNearby.setSelected(false);
-        btUser.setSelected(true);
-        btHome.setSelected(false);
-    }
+        TabHost.TabSpec page5 = tabHost.newTabSpec("tab5")
+                .setIndicator("", res.getDrawable(R.drawable.state5))
+                .setContent(new Intent(this, MoreInfoActivity.class));
+        tabHost.addTab(page5);
 
-    private TextView addTextView(Drawable d) {
-        TextView textView = new TextView(this);
-        textView.setBackground(d);
-        return textView;
-    }
-
-    class MyOnGestureListener extends GestureDetector.SimpleOnGestureListener {
-
-        @Override
-        public boolean onDown(MotionEvent e) {
-            Log.d(TAG, "onDown");
-            return true;
-        }
-
-        @Override
-        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            Log.d(TAG, "onScroll");
-            return super.onScroll(e1, e2, distanceX, distanceY);
-        }
-
-        @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            Log.d(TAG, "onFling");
-            if (e1.getX() - e2.getX() > 100) {
-                Log.d(TAG, e1.getX() + "this");
-                viewFlipper.setInAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.right_in));
-                viewFlipper.setOutAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.lift_out));
-                viewFlipper.showPrevious();
-                return true;
-            } else if ((e1.getX() - e2.getX()) < -100) {
-                viewFlipper.setInAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.left_in));
-                viewFlipper.setOutAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.right_out));
-                viewFlipper.showNext();
-                return true;
-            }
-            return true;
+        for (int i = 0; i < tabHost.getTabWidget().getChildCount(); i++) {
+            TextView textView = (TextView) tabHost.getTabWidget().getChildAt(i).findViewById(android.R.id.title);
+            textView.setTextSize(14);
+            textView.setPadding(0, 0, 0, 0);
+            ImageView image = (ImageView) tabHost.getTabWidget().getChildAt(i).findViewById(android.R.id.icon);
+            image.getLayoutParams().height = 100;//通过给它的属性赋值的方法可以解决问题
+            image.getLayoutParams().width = 100;
         }
     }
 }
